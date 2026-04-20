@@ -26,9 +26,49 @@ interface WorkflowState {
   onConnect: (connection: Connection) => void;
 }
 
+const initialNodes: WorkflowNode[] = [
+  {
+    id: "node_1",
+    type: "start",
+    position: { x: 250, y: 50 },
+    data: { label: "HR Onboarding Start" },
+  },
+  {
+    id: "node_2",
+    type: "task",
+    position: { x: 250, y: 150 },
+    data: { label: "Submit Docs", description: "Upload ID and Tax forms", assignee: "New Hire", dueDate: "" },
+  },
+  {
+    id: "node_3",
+    type: "approval",
+    position: { x: 250, y: 300 },
+    data: { label: "HR Review", approverRole: "HR Manager", threshold: 1 },
+  },
+  {
+    id: "node_4",
+    type: "automation",
+    position: { x: 250, y: 450 },
+    data: { label: "Send Welcome Email", actionId: "send_email" },
+  },
+  {
+    id: "node_5",
+    type: "end",
+    position: { x: 250, y: 600 },
+    data: { label: "Onboarding Complete" },
+  }
+] as WorkflowNode[];
+
+const initialEdges: WorkflowEdge[] = [
+  { id: "e1-2", source: "node_1", target: "node_2" },
+  { id: "e2-3", source: "node_2", target: "node_3" },
+  { id: "e3-4", source: "node_3", target: "node_4" },
+  { id: "e4-5", source: "node_4", target: "node_5" },
+];
+
 export const useWorkflowStore = create<WorkflowState>((set, get) => ({
-  nodes: [],
-  edges: [],
+  nodes: initialNodes,
+  edges: initialEdges,
   selectedNodeId: null,
 
   setNodes: (nodes) => set({ nodes }),
