@@ -36,10 +36,10 @@ export type WorkflowNodeData =
 export type WorkflowNode = Node<WorkflowNodeData, NodeType>;
 export type WorkflowEdge = Edge;
 
-export const NODE_CONFIG: Record<NodeType, { label: string }> = {
-  start: { label: "Start Node" },
-  task: { label: "Task Node" },
-  approval: { label: "Approval Node" },
-  automation: { label: "Automation Node" },
-  end: { label: "End Node" },
+export const NODE_REGISTRY: Record<NodeType, { label: string; defaultData: Record<string, any> }> = {
+  start: { label: "Start", defaultData: { label: "Start" } },
+  task: { label: "Task", defaultData: { label: "Task", description: "", assignee: "", dueDate: "" } },
+  approval: { label: "Approval", defaultData: { label: "Approval", approverRole: "", threshold: 1 } },
+  automation: { label: "Automation", defaultData: { label: "Automation", actionId: "" } },
+  end: { label: "End", defaultData: { label: "End" } },
 };

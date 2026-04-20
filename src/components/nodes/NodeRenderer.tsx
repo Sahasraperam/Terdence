@@ -1,12 +1,12 @@
 import { Handle, Position, type NodeProps, type Node } from '@xyflow/react';
-import { NODE_CONFIG, type WorkflowNodeData, type NodeType } from '../../types/workflow';
+import { NODE_REGISTRY, type WorkflowNodeData, type NodeType } from '../../types/workflow';
 
 function BaseNode({ data, selected, type }: NodeProps<Node<WorkflowNodeData>> & { type: NodeType }) {
   return (
     <div className={`px-4 py-3 shadow-md rounded-md bg-white border-2 min-w-[200px] ${selected ? 'border-primary' : 'border-gray-200'}`}>
       {type !== 'start' && <Handle type="target" position={Position.Top} className="w-3 h-3 bg-gray-500" />}
       <div className="font-bold text-sm border-b border-gray-100 pb-2 mb-2 text-gray-800">
-        {data.label || NODE_CONFIG[type].label}
+        {data.label || NODE_REGISTRY[type].label}
       </div>
       
       <div className="flex flex-col gap-1 mt-2 text-xs text-gray-600">

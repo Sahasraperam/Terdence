@@ -9,11 +9,9 @@ import {
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { useWorkflowStore } from '../../store/workflowStore';
+import { useWorkflow } from '../../hooks/useWorkflow';
 import { nodeTypes } from '../nodes/NodeRenderer';
-import type { NodeType, WorkflowNode } from '../../types/workflow';
-
-let id = 0;
-const getId = () => `node_${id++}`;
+import type { NodeType } from '../../types/workflow';
 
 function WorkflowCanvasInner() {
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
@@ -24,8 +22,9 @@ function WorkflowCanvasInner() {
   const onNodesChange = useWorkflowStore((state) => state.onNodesChange);
   const onEdgesChange = useWorkflowStore((state) => state.onEdgesChange);
   const onConnect = useWorkflowStore((state) => state.onConnect);
-  const addNode = useWorkflowStore((state) => state.addNode);
   const selectNode = useWorkflowStore((state) => state.selectNode);
+
+  const { addNode } = useWorkflow();
 
   const onDragOver = useCallback((event: React.DragEvent) => {
     event.preventDefault();
@@ -46,14 +45,7 @@ function WorkflowCanvasInner() {
         y: event.clientY,
       });
 
-      const newNode: WorkflowNode = {
-        id: getId(),
-        type,
-        position,
-        data: { label: `New ${type} node` } as any,
-      } as WorkflowNode;
-
-      addNode(newNode);
+      addNode(type, position);
     },
     [screenToFlowPosition, addNode],
   );

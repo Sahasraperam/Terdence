@@ -1,19 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { FORM_CONFIG } from './formConfig';
-import { getAutomations } from '../../services/api';
+import React from 'react';
+import { FORM_SCHEMA } from './formSchema';
+import { useAutomations } from '../../hooks/useAutomations';
 import { useNodes } from '../../hooks/useNodes';
 import type { WorkflowNode } from '../../types/workflow';
 
 export const DynamicForm = ({ node }: { node: WorkflowNode }) => {
-  const fields = FORM_CONFIG[node.type] || [];
+  const fields = FORM_SCHEMA[node.type] || [];
   const { updateNode } = useNodes();
-  const [automations, setAutomations] = useState<{id: string, label: string}[]>([]);
-
-  useEffect(() => {
-    if (node.type === 'automation') {
-       getAutomations().then(data => setAutomations(data));
-    }
-  }, [node.type]);
+  const automations = useAutomations();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     updateNode(node.id, {

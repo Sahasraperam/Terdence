@@ -1,4 +1,4 @@
-export const FORM_CONFIG: Record<string, { name: string; type: string }[]> = {
+export const FORM_SCHEMA: Record<string, { name: string; type: string }[]> = {
   start: [
     { name: "label", type: "text" }
   ],

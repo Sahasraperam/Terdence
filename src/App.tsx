@@ -12,11 +12,12 @@ function App() {
 
   const handleSimulate = async () => {
     setRunning(true);
+    setLogs([]);
     try {
       const result = await runSimulation();
       setLogs(result.steps);
-    } catch (e) {
-      console.error(e);
+    } catch (e: any) {
+      alert(e.message);
     } finally {
       setRunning(false);
     }
