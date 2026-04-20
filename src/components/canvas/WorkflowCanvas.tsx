@@ -9,11 +9,11 @@ import {
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { useWorkflowStore } from '../../store/workflowStore';
-import { nodeTypes } from '../../nodes';
+import { nodeTypes } from '../nodes/NodeRenderer';
 import type { NodeType, WorkflowNode } from '../../types/workflow';
 
 let id = 0;
-const getId = () => `dndnode_${id++}`;
+const getId = () => `node_${id++}`;
 
 function WorkflowCanvasInner() {
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
@@ -46,16 +46,11 @@ function WorkflowCanvasInner() {
         y: event.clientY,
       });
 
-      let initialData: any = { title: `${type} node` };
-      if (type === 'automated') {
-        initialData = { ...initialData, params: {} };
-      }
-
       const newNode: WorkflowNode = {
         id: getId(),
         type,
         position,
-        data: initialData,
+        data: { label: `New ${type} node` } as any,
       } as WorkflowNode;
 
       addNode(newNode);

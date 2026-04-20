@@ -1,4 +1,4 @@
-import { create } from 'zustand';
+import { create } from "zustand";
 import {
   type Connection,
   type EdgeChange,
@@ -13,12 +13,14 @@ interface WorkflowState {
   nodes: WorkflowNode[];
   edges: WorkflowEdge[];
   selectedNodeId: string | null;
-  addNode: (node: WorkflowNode) => void;
-  updateNodeData: (nodeId: string, data: any) => void;
-  deleteNode: (nodeId: string) => void;
+
   setNodes: (nodes: WorkflowNode[]) => void;
   setEdges: (edges: WorkflowEdge[]) => void;
-  selectNode: (nodeId: string | null) => void;
+  addNode: (node: WorkflowNode) => void;
+  updateNode: (id: string, data: any) => void;
+  deleteNode: (id: string) => void;
+  selectNode: (id: string | null) => void;
+
   onNodesChange: (changes: NodeChange<WorkflowNode>[]) => void;
   onEdgesChange: (changes: EdgeChange<WorkflowEdge>[]) => void;
   onConnect: (connection: Connection) => void;
@@ -29,59 +31,34 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
   edges: [],
   selectedNodeId: null,
 
-  addNode: (node) => {
-    set({ nodes: [...get().nodes, node] });
-  },
+  setNodes: (nodes) => set({ nodes }),
+  setEdges: (edges) => set({ edges }),
 
-  updateNodeData: (nodeId, data) => {
-    set({
-      nodes: get().nodes.map((node) => {
-        if (node.id === nodeId) {
-          // type override is safe here as data must match the node type
-          return { ...node, data: { ...node.data, ...data } } as WorkflowNode;
-        }
-        return node;
-      }),
-    });
-  },
+  addNode: (node) =>
+    set((state) => ({ nodes: [...state.nodes, node] })),
 
-  deleteNode: (nodeId) => {
-    set({
-      nodes: get().nodes.filter((node) => node.id !== nodeId),
-      edges: get().edges.filter(
-        (edge) => edge.source !== nodeId && edge.target !== nodeId
+  updateNode: (id, data) =>
+    set((state) => ({
+      nodes: state.nodes.map((n) =>
+        n.id === id ? { ...n, data } : n
       ),
-      selectedNodeId: get().selectedNodeId === nodeId ? null : get().selectedNodeId,
-    });
-  },
+    })),
 
-  setNodes: (nodes) => {
-    set({ nodes });
-  },
+  deleteNode: (id) =>
+    set((state) => ({
+      nodes: state.nodes.filter((n) => n.id !== id),
+      edges: state.edges.filter((e) => e.source !== id && e.target !== id),
+      selectedNodeId: state.selectedNodeId === id ? null : state.selectedNodeId,
+    })),
 
-  setEdges: (edges) => {
-    set({ edges });
-  },
+  selectNode: (id) => set({ selectedNodeId: id }),
 
-  selectNode: (nodeId) => {
-    set({ selectedNodeId: nodeId });
-  },
+  onNodesChange: (changes) =>
+    set({ nodes: applyNodeChanges(changes, get().nodes) as WorkflowNode[] }),
 
-  onNodesChange: (changes) => {
-    set({
-      nodes: applyNodeChanges(changes, get().nodes) as WorkflowNode[],
-    });
-  },
+  onEdgesChange: (changes) =>
+    set({ edges: applyEdgeChanges(changes, get().edges) }),
 
-  onEdgesChange: (changes) => {
-    set({
-      edges: applyEdgeChanges(changes, get().edges),
-    });
-  },
-
-  onConnect: (connection) => {
-    set({
-      edges: addEdge(connection, get().edges),
-    });
-  },
+  onConnect: (connection) =>
+    set({ edges: addEdge(connection, get().edges) }),
 }));

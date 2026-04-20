@@ -1,47 +1,45 @@
 import type { Node, Edge } from '@xyflow/react';
 
-export type NodeType = 'start' | 'task' | 'approval' | 'automated' | 'end';
+export type NodeType =
+  | "start"
+  | "task"
+  | "approval"
+  | "automation"
+  | "end";
 
-export type StartNodeData = {
-  title: string;
-  metadata: Record<string, string>;
-};
+export interface BaseNodeData extends Record<string, unknown> {
+  label: string;
+}
 
-export type TaskNodeData = {
-  title: string;
-  description: string;
-  assignee: string;
-  dueDate: string;
-  customFields?: Record<string, string>;
-};
+export interface TaskNodeData extends BaseNodeData {
+  description?: string;
+  assignee?: string;
+  dueDate?: string;
+}
 
-export type ApprovalNodeData = {
-  title: string;
-  approverRole: string;
-  timeoutDays?: number;
-};
+export interface ApprovalNodeData extends BaseNodeData {
+  approverRole?: string;
+  threshold?: number;
+}
 
-export type AutomatedNodeData = {
-  title: string;
-  actionId: string;
-  params: Record<string, any>;
-};
+export interface AutomationNodeData extends BaseNodeData {
+  actionId?: string;
+  params?: Record<string, any>;
+}
 
-export type EndNodeData = {
-  title: string;
-  resolutionMode: 'success' | 'failure';
-};
+export type WorkflowNodeData =
+  | BaseNodeData
+  | TaskNodeData
+  | ApprovalNodeData
+  | AutomationNodeData;
 
-export type WorkflowNode =
-  | Node<StartNodeData, 'start'>
-  | Node<TaskNodeData, 'task'>
-  | Node<ApprovalNodeData, 'approval'>
-  | Node<AutomatedNodeData, 'automated'>
-  | Node<EndNodeData, 'end'>;
-
+export type WorkflowNode = Node<WorkflowNodeData, NodeType>;
 export type WorkflowEdge = Edge;
 
-export interface ValidationResult {
-  isValid: boolean;
-  errors: string[];
-}
+export const NODE_CONFIG: Record<NodeType, { label: string }> = {
+  start: { label: "Start Node" },
+  task: { label: "Task Node" },
+  approval: { label: "Approval Node" },
+  automation: { label: "Automation Node" },
+  end: { label: "End Node" },
+};
